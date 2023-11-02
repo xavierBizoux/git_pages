@@ -1,33 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+import BasicTable from './components/BasicTable'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [VAData, setVAData] = useState({})
+  useEffect(() => {
+    // Function to handle data received from VA
+    const onDataReceived = (evt) => {
+      if (evt && evt.data && evt.data?.data !== undefined) {
+        const data = evt.data
+        // Check if data element exists in vaData object
+        if (data.data) {
+          // Keep the original data
+          setVAData(data)
+          console.log(VAData)
+        }
+      }
+    }
+    // Listen for message coming from VA
+    window.addEventListener("message", onDataReceived, false)
+    return () => window.removeEventListener("message", onDataReceived)
+  }, [VAData])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      { VAData && "data" in VAData &&
+        <BasicTable rows={VAData.data} columns={VAData.columns}/>
+      }
     </>
   )
 }
