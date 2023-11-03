@@ -12,7 +12,6 @@ function App() {
         if (data.data) {
           // Keep the original data
           setVAData(data)
-          console.log(VAData)
         }
       }
     }
